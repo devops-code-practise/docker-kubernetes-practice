@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  my-app:
+    image: feedback-image:latest
+    ports:
+      - "4000:80"
+    container_name: feedback-mount
+    volumes:
+      - feedback:/app/feedback
+      - .:/app
+      - /app/node_modules
+
+volumes:
+  feedback:
+
+  # docker compose up -d
