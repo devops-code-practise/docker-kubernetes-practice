@@ -1,0 +1,59 @@
+# version: "" (obsolete. no need to define anymore)
+# no need to specify --rm By default, when you bring your serivces down, they will be removed
+# -d flag is specified when you start it all together
+# --env-file ( is a command for terminal, where we then specify teh file to the env file we want to read)
+# if you ahve key-value parirs, no need for dash, if you have a single value, it is must have.
+# there is no need to createa a network, because when we have such a compose file, docker will automatically add all those services (cotnaienrs) to this network (of course, you can add your own network if you need)
+services:
+  mongodb:
+    image: "mongo"
+    volumes:
+      - data:/data/db
+    # environment:
+    #   MONGO_INITDB_ROOT_USERNAME: <name>
+    #   MONGO_INITDB_ROOT_PASSWORD: <password>
+    # - MONGO_INITDB_ROOT_USERNAME=<max> (just an alternative syntax)
+    env_file:
+      - ./env/mongo.env
+  backend:
+    # container_name: backend
+    build: ./backend
+    # build:
+    #   context: contextPath
+    #   dockerfile: Dockerfile
+    # image: "goals-node"
+    ports:
+      - "80/80"
+    volumes:
+      - logs:/app/logs
+      - ./backend:/app
+      - /app/node_modules
+    env_file: ./env/backend.env
+    # availible in compose only
+    depends_on:
+      - mongodb
+  # the names for services are use still for send requests for example.   Even though the real names for containers are different
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend/src:/app/src
+    stdin_open: true
+    tty: true
+    depends_on:
+      - backend
+# docker compose + 'build' just build images. does not start anything
+# docker compose + '--build' use when you changed an image. otherwise the cached one (old) will be used
+#  if you use named volumes, you should also add the code belove because the docker needs to be awared that you use named volumes.
+#  if you use the same volume name in in different services, the volume will be shared
+volumes:
+  data:
+  logs:
+
+# to start compose, we need a terminal navigated where this file is located and run docker-compose up
+#   (start all the services, and also pull and build all the defined images)
+# docker-compose up -d (start detached)
+
+# docker compose down ( to stop all sevcies, remove all containers etc.)
+#    (does not deleate volumumes. then we need to run docker compose down -v)
