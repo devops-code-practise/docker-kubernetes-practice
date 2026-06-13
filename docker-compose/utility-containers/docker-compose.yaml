@@ -1,0 +1,12 @@
+services:
+  npm:
+    build: ./
+    volumes:
+      - ./:/app
+    stdin_open: true
+    tty: true
+
+# 'run' is a command for those utility containers, where we trigger the name of a service, and then write same as we want to do in terminal, where we specifried command after the image that must be appended to the entry point
+# docker-compose run npm init
+
+# docker-compose run does not have auto removing. there we must add the --rm flag
