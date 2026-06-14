@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: PersistentVolume
+metadata:
+  name: host-pv
+spec:
+  capacity:
+    # up to 4Gi space can be claimed ans used for this host path volume.
+    storage: 1Gi
+  volumeMode: FileSystem #/Block
+  storageClassName: standard
+  accessModes:
+    # can be mounted as a read write volume by a SINGLE node (msut be at the same path)
+    - ReadWriteOnce
+    # Is read only, but can be claimed by multiple nodes ( not availible for hostPath since we have only one node)
+    # - ReadOnlyMany
+    # same as ReadOnlyMany but now we also have access to write (also is not available in hostPath)
+    # - ReadWriteMany
+  hostPath:
+    path: /data
+    type: DirectoryOrCreate

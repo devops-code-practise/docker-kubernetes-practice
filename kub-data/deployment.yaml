@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: story-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: story
+  template:
+    metadata:
+      labels:
+        app: story
+    spec:
+      containers:
+        - name: story
+          image: academind/kub-data-demo
+          imagePullPolicy: Always
+          env:
+            - name: STORY_FOLDER
+              # value: "story"
+              valueFrom:
+                configMapKeyRef:
+                  name: data-store-env
+                  key: folder
+          # define which volumes should be mounted
+          volumeMounts:
+            # <path in the container>
+            # (path  in the container where this empty dir should be mounted in.)
+            - mountPath: /app/story
+              name: story-volume
+      # define available volumes
+      volumes:
+        - name: story-volume
+          # creates a new directory as a pod gets created, and keep in alive until the pod is alive
+          # (which type of volume should be created)
+          # emptyDir: {}
+          # ====================================================
+          # ====================================================
+          # allows us to define a path on the machine wher our pod is running, and then the data from that path will be exposed to different pods.
+          # (so now, pods can share one and the same volume, instead of having per-pod specific volume.)
+          # (coinsider only if you work with mroe then one replica.)
+          # hostPath:
+          #   # path on the host machine where it should be stored (a bit like a bind mount)
+          #   # (should not use any path that is reserved in linux)
+          #   path: /data
+          #   # this should be an existing dir or it will be created
+          #   type: DirectoryOrCreate
+          # ====================================================
+          # ====================================================
+          # Connecting the claim
+          PersistentVolumeClaim:
+            claimName: host-pvc

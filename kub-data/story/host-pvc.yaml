@@ -1,0 +1,15 @@
+# A claim that can be used by pods to to maek that claim to the persistent volume
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: host-pvc
+spec:
+  # define which persitent volumes we wanna claim
+  volumeName: host-pv
+  storageClassName: standard
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      # the max is 1Gi since it is the max defined in the persistent volume
+      storage: 1Gi
