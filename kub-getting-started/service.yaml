@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend
+  labels:
+    group: example
+spec:
+  # older syntax, and here we can match ONYL labels, whiles deployment obj can do more.
+  selector:
+    app: <any name you want>
+  ports:
+    - protocol: "TCP"
+      port: 80
+      targetPort: 8080
+    # could have multiple ports
+    # - protocol: "TCP"
+    #   port: 3000
+    #   targetPort: 5000
+  type: LoadBalancer
+  # type: ClusterIP
+  # type: NodePort
+
+# kubectl apply -f service.yaml
+# kubectl delete -f=deployment.yaml === kubectl delete deployment <deplyment name> (can add more separated by a coma, or simply by adding another -f=...)
+# kubectl delete -l group-example (deleting objects by their labels)

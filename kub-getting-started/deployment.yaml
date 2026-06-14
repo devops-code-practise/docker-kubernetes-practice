@@ -1,0 +1,42 @@
+# must have an api version key.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  # the replacement for kubectl create deployment <name>
+  name: <name you want for this deployment>
+  labels:
+    group: example
+# config for the deployment
+spec:
+  # the amount of pods you need
+  replicas: 3
+  # required to define selector
+  # (Deployments do not directly hold onto Pods. Instead, they look around the cluster using tags.)
+  selector:
+    matchLabels:
+      app: <any name you want>
+      #tier:backend
+  template: #(a pod)
+    metadata:
+      labels:
+        app: <any name you want>
+        # tier:backend (could have multiple labels)
+    # spec for individual pods
+    # (MUST ALWAYS BE THE SAME TYPE> E>G> PODS OF THE SAME TYPE BUT WITH ANY AMOUNT OF REPLICAS)
+    spec:
+      containers:
+        - name: <any name you want for this cont>
+          # the image we specify when run: kubectl create deployment <name> --image=<>
+          # (cound also add multiple images like: --image=i1,i2,i3...)
+          image: <image name you want to use from docker hub:<tag>>
+          # then the pull of the image will happen always (for example if you wnat so, or you forgot to define the :latest tag on your new image)
+          imagePullPolicy: Always
+          #
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 8080
+              # headers:
+              periodSeconds: 10
+              initialDelaySeconds: 5
+# to run the config file to the connected cluster: kubectl apply -f=<path to the file you need>

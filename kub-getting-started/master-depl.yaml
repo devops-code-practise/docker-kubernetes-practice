@@ -1,0 +1,35 @@
+# a good practise to put service first
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend
+spec:
+  selector:
+    app: <any name you want>
+  ports:
+    - protocol: "TCP"
+      port: 80
+      targetPort: 8080
+  type: LoadBalancer
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: <name you want for this deployment>
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: <any name you want>
+      # matchExpressions: ( have more configuration)
+      # -{key: app, operator: In ,values: [second-app, first-app]}
+      # -{key: app, operator: NotIn ,values: [second-app, first-app]}
+  template:
+    metadata:
+      labels:
+        app: <any name you want>
+        tier: backend
+    spec:
+      containers:
+        - name: <any name you want for this cont>
+          image: <image name you want to use from docker hub:<tag>>
